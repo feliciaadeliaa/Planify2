@@ -3,6 +3,7 @@
 use App\Http\Controllers\Kanban\CardController;
 use App\Http\Controllers\Kanban\ColumnController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,8 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// dashboard
+Route::get('/task-statistics', [HomeController::class, 'taskStatistics']);
 
 // projects
 Route::get('/project', [ProjectController::class, 'fetch']);
