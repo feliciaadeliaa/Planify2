@@ -4,6 +4,7 @@ use App\Http\Controllers\Kanban\CardController;
 use App\Http\Controllers\Kanban\ColumnController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\WeeklyController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -14,7 +15,9 @@ Route::get('/hello', function () {
     return Inertia::render('Hello');
 });
 
-
+    // dashboard
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard.index');
+    
     // Kanban Related Controller
     Route::get('/weekly-planner/all', [WeeklyController::class, 'index'])->name('weekly.index');
 

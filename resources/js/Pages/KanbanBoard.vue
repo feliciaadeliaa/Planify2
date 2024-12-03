@@ -2,7 +2,7 @@
 import Main from "./Layout/Main.vue";
 import axios from "axios";
 import { ref, onMounted, defineProps } from "vue";
-import { toast } from "vue3-toastify";
+
 
 const projects = ref([""]);
 const project_title = ref("");
