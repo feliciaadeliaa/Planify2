@@ -5,6 +5,7 @@ use App\Http\Controllers\Kanban\ColumnController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\WeeklyController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,6 +21,10 @@ Route::get('/hello', function () {
     
     // Kanban Related Controller
     Route::get('/weekly-planner/all', [WeeklyController::class, 'index'])->name('weekly.index');
+
+    // event
+    Route::get('/events/lists', [EventController::class, 'listEvent'])->name('events.list');
+    Route::get('/events', [EventController::class, 'index'])->name('events');
 
     // --- Column Controller
     Route::get('/project/all', [ProjectController::class, 'index'])->name('project.index');
