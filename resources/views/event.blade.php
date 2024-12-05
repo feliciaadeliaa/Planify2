@@ -39,18 +39,19 @@
        console.log(info);
        
        $.ajax({
-            url = `{{ route('events.create') }}`
+            url: `{{ route('events.create') }}`,
             success: function (res){
                 modal.html(res).modal('show')
             }
        })
-       // Gunakan Bootstrap 5 modal API tanpa jQuery
-       var modal = new bootstrap.Modal(document.getElementById('modal-action'));
-       modal.show();
-     }
-   });
-   calendar.render();
-});
+    //    Gunakan Bootstrap 5 modal API tanpa jQuery
+    //    var modal = new bootstrap.Modal(document.getElementById('modal-action'));
+    //    modal.show();
+        $('#modal-action').modal('show')
+             }
+     });
+        calendar.render();
+     });
 
 
     //   document.addEventListener('DOMContentLoaded', function() {

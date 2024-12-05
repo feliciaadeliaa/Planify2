@@ -1,4 +1,5 @@
 <x-modal-action action="{{ $action }}">
+    
     @if ($data->id)
         @method('put')
     @endif
