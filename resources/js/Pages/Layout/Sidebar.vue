@@ -66,7 +66,7 @@ const userId = window.AuthUser?.id || null;
 
       <!-- Weekly Planner -->
       <a
-        href="/weekly-planner/all"
+        href="/events"
         class="p-1.5 text-gray-700 focus:outline-nones transition-colors duration-200 rounded-lg dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-gray-100"
       >
         <svg

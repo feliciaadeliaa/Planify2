@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             CardsSeeder::class,
             TaskSeeder::class,
             SubTaskSeeder::class,
+            EventSeeder::class,
         ]);
     }
 }
