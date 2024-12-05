@@ -37,6 +37,8 @@ Route::get('register', [AuthController::class, 'register'])->name('logout');
     // event
     Route::get('/events/lists', [EventController::class, 'listEvent'])->name('events.list');
     Route::get('/events', [EventController::class, 'index'])->name('events');
+    Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
+
 
     // --- Column Controller
     Route::get('/project/all', [ProjectController::class, 'index'])->name('project.index');

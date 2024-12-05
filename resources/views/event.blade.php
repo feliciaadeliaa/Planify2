@@ -33,24 +33,47 @@
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
          initialView: 'dayGridMonth',
-        themeSystem: 'bootstrap5',
-        events:  `{{ route('events.list') }}`,
+         themeSystem: 'bootstrap5',
+         events:  `{{ route('events.list') }}`,
+         editable: 'true',
          dateClick: function(info) {
-       console.log(info);
+            console.log(info);
        
-       $.ajax({
-            url = `{{ route('events.create') }}`
+         $.ajax({
+            url: `{{ route('events.create') }}`,
+            data: {
+                start_date: info.dateStr,
+                end_date: info.dateStr
+            },
             success: function (res){
                 modal.html(res).modal('show')
+
+                $('#form-action').on('submit', function(e){
+                    e.preventDefault()
+                    const form = this
+                    const formData = new FormData(form)
+                    $.ajax({
+                        url: form.action,
+                        method: form.method,
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        succes: function (res) {
+                            modal.modal('hide')
+                            calender.refretchEvents()
+                        }
+                    })
+                })
             }
        })
-       // Gunakan Bootstrap 5 modal API tanpa jQuery
-       var modal = new bootstrap.Modal(document.getElementById('modal-action'));
-       modal.show();
-     }
-   });
-   calendar.render();
-});
+    //    Gunakan Bootstrap 5 modal API tanpa jQuery
+    //    var modal = new bootstrap.Modal(document.getElementById('modal-action'));
+    //    modal.show();
+        $('#modal-action').modal('show')
+             }
+     });
+        calendar.render();
+     });
 
 
     //   document.addEventListener('DOMContentLoaded', function() {
