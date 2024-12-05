@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Kanban\CardController;
 use App\Http\Controllers\Kanban\ColumnController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\WeeklyController;
 use App\Http\Controllers\HomeController;
+
 use App\Http\Controllers\EventController;
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -15,6 +18,15 @@ Route::get('/', function () {
 Route::get('/hello', function () {
     return Inertia::render('Hello');
 });
+Route::get('/login', function () {
+    return Inertia::render('Login');
+});
+
+Route::post('authenticate', [AuthController::class, 'authenticate'])->name('authenticate');
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('register', [AuthController::class, 'register'])->name('logout');
+
+
 
     // dashboard
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard.index');

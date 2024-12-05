@@ -1,22 +1,22 @@
 <x-modal-action action="{{ $action }}">
-    
+
     @if ($data->id)
         @method('put')
     @endif
 <div class="row">
     <div class="col-6"></div>
          <div class="mb-3"></div>
-             <input type="text" name="start_date" class="form-control">
+             <input type="text" name="start_date" value="{{ $data->start_date ?? request()->start_date }}" class="form-control">
         </div>
     </div>
 <div class="col-6"></div>
          <div class="mb-3"></div>
-             <input type="text" name="end_date" class="form-control">
+             <input type="text" name="end_date" value="{{ $data->start_date ?? request()->start_date }}" class="form-control">
         </div>
     </div>
     <div class="col-12">
         <div class="mb-3">
-            <textarea name="title" class="form-control"></textarea>
+            <textarea name="title" class="form-control">{{ $data->title }}</textarea>
         </div>
     </div>
 </div>

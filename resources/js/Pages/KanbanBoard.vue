@@ -42,7 +42,11 @@ const newProject = async () => {
       dangerouslyHTMLString: true,
     });
   } catch (error) {
-    console.log("error" + error);
+    if (error.response) {
+      console.log("Error data:", error.response.data);
+      console.log("Error status:", error.response.status);
+      console.log("Error headers:", error.response.headers);
+    }
   }
 };
 

@@ -43,9 +43,19 @@ class EventController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(EventRequest $request, Event $event)
     {
-        //
+        $event->start_date = $request->start_date;
+        $event->end_date = $request->end_date;
+        $event->title = $request->title;
+        $event->category = $request->category;
+
+        $event->save();
+
+        return response()->json([
+            'status' => 'success',
+            'massage' => 'Save data Successfully'
+        ]);
     }
 
     /**
