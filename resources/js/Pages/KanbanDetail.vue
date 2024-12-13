@@ -12,6 +12,14 @@ const props = defineProps({
   },
 });
 
+// const fetchProject = () {
+//   try {
+//     const response = awat axios.get("/api/project")
+//   } catch (error) {
+
+//   }
+// }
+
 const isFormVisible = ref(false);
 const toggleForm = () => {
   isFormVisible.value = !isFormVisible.value;
@@ -54,6 +62,7 @@ const addColumn = async () => {
       hideProgressBar: true,
       dangerouslyHTMLString: true,
     });
+    window.location.reload();
   } catch (error) {
     console.log("the error = ", error);
   }
@@ -67,6 +76,7 @@ const addCard = async (columnId) => {
       column_id: columnId,
       card_name: card_name.value,
     });
+    window.location.reload();
     console.log("success");
   } catch (error) {
     console.log("error = ", error);
@@ -139,29 +149,38 @@ watch(
 
 <template>
   <Main>
-    <a href="/project/all" class="btn btn-neutral btn-sm"
-      ><i class="fa-solid fa-chevron-left"></i
-    ></a>
-    <h1 class="text-2xl font-bold my-5">{{ props.data.project_title }}</h1>
+    <!-- Back Button and Title -->
+    <div class="flex items-center space-x-4 mb-8">
+      <a href="/project/all" class="btn btn-neutral btn-sm">
+        <i class="fa-solid fa-chevron-left"></i>
+      </a>
+      <h1 class="text-3xl font-bold text-white">
+        {{ props.data.project_title }}
+      </h1>
+    </div>
 
-    <div class="flex flex-row gap-4 my-5 w-full">
+    <!-- Kanban Columns (Horizontal Scroll) -->
+    <div class="flex overflow-x-auto gap-8 py-6 justify-start">
+      <!-- Loop through each column -->
       <div
         v-for="column in props.data.columns"
         :key="column.id"
-        class="card bg-base-100 w-80 h-fit shadow-xl p-4 flex-none"
+        class="card bg-gray-800 shadow-lg rounded-2xl h-fit p-6 w-96 flex-none hover:shadow-xl transition-all duration-300 dark:bg-gray-900"
       >
-        <div class="flex justify-between">
-          <h2 class="card-title font-bold mb-3 text-gray-300">
+        <!-- Column Header -->
+        <div class="flex justify-between items-center mb-5">
+          <h2 class="text-2xl font-semibold text-gray-200 truncate">
             {{ column.column_name }}
           </h2>
           <button
             @click="deleteColumn(column.id)"
-            class="btn btn-sm btn-neutral bg-transparent"
+            class="btn btn-sm btn-neutral bg-transparent hover:bg-gray-700 text-gray-400 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             <i class="fa-solid fa-trash"></i>
           </button>
         </div>
 
+        <!-- Draggable Task List -->
         <Draggable
           v-model="column.cards"
           group="cards"
@@ -171,67 +190,81 @@ watch(
         >
           <template #item="{ element }">
             <li
-              class="drag-list bg-base-200 p-4 my-2 rounded-md flex flex-row justify-between hover:bg-base-300"
+              class="drag-list bg-gray-700 p-4 mb-3 rounded-lg flex justify-between items-center hover:bg-gray-600 transition-all dark:bg-gray-800 dark:hover:bg-gray-700"
             >
-              <a>{{ element.card_name }}</a>
-              <button @click="deleteCard(element.id)" class="text-gray-500">
+              <a class="text-lg text-gray-300">{{ element.card_name }}</a>
+              <button
+                @click="deleteCard(element.id)"
+                class="text-gray-500 hover:text-red-500 focus:outline-none"
+              >
                 <i class="fa-solid fa-x fa-sm"></i>
               </button>
             </li>
           </template>
         </Draggable>
 
+        <!-- Add Task Form -->
         <form
           v-if="isColumnFormVisible(column.id)"
           @submit.prevent="addCard(column.id)"
           method="post"
+          class="mt-5"
         >
           <input
             type="text"
             name="column_id"
             :value="column.id"
-            class="w-full"
+            class="hidden"
             disabled
           />
           <input
             type="text"
             name="card_name"
             v-model="card_name"
-            class="input w-full my-3"
+            class="input input-bordered w-full my-3 text-gray-300 placeholder-gray-500 dark:bg-gray-700 dark:text-gray-200"
             placeholder="Add task"
           />
-          <button type="submit" class="btn btn-success w-full my-1">
-            Create New Task
+          <button type="submit" class="btn btn-success w-full my-2">
+            Create Task
           </button>
         </form>
+
+        <!-- New Task Button -->
         <button
           @click="toggleColumnFormVisibility(column.id)"
-          class="btn btn-neutral"
+          class="btn btn-neutral w-full mt-4 dark:text-gray-300"
         >
           New Task
         </button>
       </div>
 
-      <div class="card w-80 flex-none">
-        <button class="btn btn-neutral btn-outline mb-3" @click="toggleForm">
-          {{ isFormVisible ? "Cancel" : "New Card" }}
+      <!-- New Column Card -->
+      <div
+        class="card w-96 flex-none shadow-xl rounded-2xl p-6 bg-gray-800 dark:bg-gray-900"
+      >
+        <button
+          class="btn btn-neutral btn-outline w-full mb-4"
+          @click="toggleForm"
+        >
+          {{ isFormVisible ? "Cancel" : "New Column" }}
         </button>
+
         <form @submit.prevent="addColumn" method="post">
           <input type="hidden" name="project_id" v-model="project_id" />
           <input
             type="text"
-            placeholder="Card Title"
+            placeholder="Column Title"
             v-show="isFormVisible"
             name="column_title"
             v-model="column_title"
-            class="input input-bordered w-full mb-3"
+            class="input input-bordered w-full mb-4 text-gray-300 placeholder-gray-500 dark:bg-gray-700 dark:text-gray-200"
           />
           <button
             type="submit"
             v-show="isFormVisible"
             class="btn btn-success w-full"
           >
-            Create Card
+            Create Column
           </button>
         </form>
       </div>
@@ -242,5 +275,17 @@ watch(
 <style scoped>
 .drag-list {
   cursor: move;
+}
+
+.card {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .card {
+  background-color: #1e1e1e; /* Dark Card Background */
 }
 </style>

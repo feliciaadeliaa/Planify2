@@ -61,7 +61,7 @@
                         contentType: false,
                         succes: function (res) {
                             modal.modal('hide')
-                            calender.refretchEvents()
+                            calender.refetchEvents()
                         }
                     })
                 })
@@ -94,28 +94,27 @@
        })
     },
     eventDrop: function (event) {
-        console.log(event);
-        
-        $.ajax({
-            url: `{{ url('events') }}/${event.id}`,
-            method: 'put',
-            data: {
-                id: event.id,
-                start_date: event.startStr,
-                end_date: event.end.toISOString().substring('0, 10')
-                title: event.title,
-                category: event.extendedProps.category
-            }
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                accept: 'application/json'
-            },
-            success: function (res){
-                modal.modal('hide')
-
-            }
-       })
-    }
+    console.log(event);
+    
+    $.ajax({
+        url: `{{ url('events') }}/${event.id}`,
+        method: 'put',
+        data: {
+            id: event.id,
+            start_date: event.startStr,
+            end_date: event.end.toISOString().substring(0, 10), // Corrected substring syntax
+            title: event.title,
+            category: event.extendedProps.category
+        },
+        headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            accept: 'application/json'
+        },
+        success: function (res) {
+            modal.modal('hide');
+        }
+    });
+}
 
 
     });

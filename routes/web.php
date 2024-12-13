@@ -8,36 +8,58 @@ use App\Http\Controllers\WeeklyController;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\EventController;
-
+use App\Http\Controllers\NotesController;
+use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\GuestMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::get('/hello', function () {
-    return Inertia::render('Hello');
-});
-Route::get('/login', function () {
-    return Inertia::render('Login');
-});
-
 Route::post('authenticate', [AuthController::class, 'authenticate'])->name('authenticate');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('register', [AuthController::class, 'register'])->name('logout');
+Route::post('register/create', [AuthController::class, 'register'])->name('register.create');
 
+Route::middleware(GuestMiddleware::class)->group(function () {
+    Route::get('/login', function () {
+        return Inertia::render('Login');
+    })->name('login');
 
+    Route::get('/register', function () {
+        return Inertia::render('Register');
+    })->name('register');
+
+    Route::get('/', function () {
+        return view('welcome');
+    });
+});
+
+Route::middleware(AuthMiddleware::class)->group(function () {
+
+    Route::get('/calender', function () {
+        return Inertia::render('Calender');
+    })->name('calender.index');
+
+    Route::get('/project/{project}/invitations', [ProjectController::class, 'showInvitations'])
+    ->name('project.invitations');
+
+    Route::post('/projects/{project}/add-user', [ProjectController::class, 'addUser'])->name('projects.add-user');
+    Route::delete('/projects/{project}/remove-user/{user}', [ProjectController::class, 'removeUser'])->name('projects.remove-user');
+    Route::get('/projects/{project}/users', [ProjectController::class, 'projectUsers'])->name('projects.users');
 
     // dashboard
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard.index');
+
+    // Notes Controller
+    Route::get('/goal-tracking/all', [NotesController::class, 'index'])->name('goal.index');
+
     
     // Kanban Related Controller
     Route::get('/weekly-planner/all', [WeeklyController::class, 'index'])->name('weekly.index');
 
     // event
-    Route::get('/events/lists', [EventController::class, 'listEvent'])->name('events.list');
-    Route::get('/events', [EventController::class, 'index'])->name('events');
-    Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
+    Route::get('/events', [EventController::class, 'index']); // Fetch events
+    Route::post('/events', [EventController::class, 'store']); // Create event
+    Route::put('/events/{id}', [EventController::class, 'update']); // Update event
+    Route::delete('/events/{id}', [EventController::class, 'destroy']); // Delete event
 
 
     // --- Column Controller
@@ -49,3 +71,6 @@ Route::get('register', [AuthController::class, 'register'])->name('logout');
     Route::get('/cards/all', [CardController::class, 'index'])->name('card.index');
 
     Route::put('/cards/{card}/move', [CardController::class, 'move'])->name('cards.move');
+
+
+});

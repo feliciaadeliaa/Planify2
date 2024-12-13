@@ -5,29 +5,21 @@ import { route } from "ziggy-js";
 
 const email = ref("");
 const password = ref("");
+const name = ref("");
 const errorMessage = ref("");
 const isLoading = ref(false);
 
-const login = async () => {
-  isLoading.value = true;
-
+const createUser = async () => {
   try {
-    const response = await axios.post("/authenticate", {
+    isLoading.value = true;
+    const response = await axios.post(route("register.create"), {
+      name: name.value,
       email: email.value,
       password: password.value,
     });
-
-    if (response.data.redirect) {
-      // Redirect using window.location
-      window.location.href = response.data.redirect;
-    }
+    window.location.href = response.data.redirect;
   } catch (error) {
-    if (error.response && error.response.status === 401) {
-      errorMessage.value = error.response.data.message; // Display error message
-      isLoading.value = false;
-    } else {
-      errorMessage.value = "An unexpected error occurred.";
-    }
+    console.log("error message : " + error);
   }
 };
 </script>
@@ -37,9 +29,12 @@ const login = async () => {
     <div
       class="container flex items-center justify-center min-h-screen px-6 mx-auto"
     >
-      <form @submit.prevent="login" class="w-full max-w-md">
-
-        <div v-if="$page.props.flash.message" role="alert" class="alert alert-error mb-5">
+      <form @submit.prevent="createUser" class="w-full max-w-md">
+        <div
+          v-if="$page.props.flash.message"
+          role="alert"
+          class="alert alert-error mb-5"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6 shrink-0 stroke-current"
@@ -65,7 +60,7 @@ const login = async () => {
         <h1
           class="mt-3 text-2xl font-semibold text-gray-800 capitalize sm:text-3xl dark:text-white"
         >
-          sign In
+          Create an Account
         </h1>
         <div
           role="alert"
@@ -74,7 +69,35 @@ const login = async () => {
         >
           <span>{{ errorMessage }}</span>
         </div>
+
         <div class="relative flex items-center mt-8">
+          <span class="absolute">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-6 h-6 mx-3 text-gray-300 dark:text-gray-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </span>
+
+          <input
+            type="text"
+            class="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+            placeholder="Full Name"
+            name="name"
+            v-model="name"
+          />
+        </div>
+
+        <div class="relative flex items-center mt-4">
           <span class="absolute">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -134,15 +157,15 @@ const login = async () => {
             class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
           >
             <span v-if="isLoading">Loading...</span>
-            <span v-else>Login</span>
+            <span v-else>Sign Up</span>
           </button>
 
           <div class="mt-6 text-center">
             <a
-              :href="route('register')"
+              :href="route('login')"
               class="text-sm text-blue-500 hover:underline dark:text-blue-400"
             >
-              Don’t have an account yet? Sign up
+              Already have an account yet? Login
             </a>
           </div>
         </div>

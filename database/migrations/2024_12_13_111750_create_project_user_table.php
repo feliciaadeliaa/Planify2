@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('project', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->references('id')->on('users');
-            $table->string('project_title');
-            $table->date('due_date');
-            $table->enum('status', ['pending', 'accepted', 'declined'])->default('pending');
+        Schema::create('project_user', function (Blueprint $table) {
+            $table->foreignId('project_id')->constrained('project')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->primary(['project_id', 'user_id']);
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('project');
+        Schema::dropIfExists('project_user');
     }
 };

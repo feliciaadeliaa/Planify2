@@ -15,4 +15,14 @@ class ProjectModel extends Model
     {
         return $this->hasMany(ColumnModel::class, 'project_id');
     }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id');
+    }
 }

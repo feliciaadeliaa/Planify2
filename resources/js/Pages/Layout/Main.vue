@@ -2,16 +2,15 @@
 import Sidebar from "./Sidebar.vue";
 </script>
 
-
 <template>
-  <div class="container-body flex">
+  <div class="flex min-h-screen">
     <!-- Sidebar -->
-    <Sidebar></Sidebar>
+    <Sidebar class="w-64 bg-gray-800 p-4"></Sidebar>
     <!-- Sidebar -->
 
-    <!-- Content -->
-     <div class="container-body px-14 pt-8 w-full">
-         <slot></slot>
-     </div>
+    <!-- Main Content -->
+    <main class="flex-1 p-8 bg-gray-100 dark:bg-gray-900">
+      <slot></slot>
+    </main>
   </div>
 </template>

@@ -23,9 +23,8 @@ class EventSeeder extends Seeder
             if(is_array($day)) {
             $event []=[
                 'title' => $fake->sentence(3),
-                'start_date' => date('y-m-d', strtotime($today. '+ '. $day[0].' days')),
-                'end_date' => date('y-m-d', strtotime($today. '+ '. $day[1].' days')),
-                'category' => $fake->randomElement(['success', 'danger', 'warning', 'info']),
+                'start' => date('y-m-d', strtotime($today. '+ '. $day[0].' days')),
+                'end' => date('y-m-d', strtotime($today. '+ '. $day[1].' days')),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -33,9 +32,8 @@ class EventSeeder extends Seeder
         } else {
             $event []=[
                 'title' => $fake->sentence(3),
-                'start_date' => date('y-m-d', strtotime($today. '+ '. $day.' days')),
-                'end_date' => date('y-m-d', strtotime($today. '+ '. $day.' days')),
-                'category' => $fake->randomElement(['success', 'danger', 'warning', 'info']),
+                'start' => date('y-m-d', strtotime($today. '+ '. $day.' days')),
+                'end' => date('y-m-d', strtotime($today. '+ '. $day.' days')),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

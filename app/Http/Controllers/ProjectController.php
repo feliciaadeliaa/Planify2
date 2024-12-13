@@ -3,21 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProjectModel;
+use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
 {
-    public function fetch()
+    public function getRecentItems($id)
     {
-        $data = ProjectModel::all();
+        $projects = ProjectModel::where('user_id', '=', $id)->latest()->take(3)->get(); // Get the 5 most recent projects
+        $tasks = Task::where('user_id', '=', $id)->latest()->take(3)->get(); // Get the 5 most recent tasks
+
+        return response()->json([
+            'projects' => $projects,
+            'tasks' => $tasks
+        ]);
+    }
+    public function fetch($id)
+    {
+        $data = ProjectModel::where('user_id', '=', $id)->get();
         return response()->json($data);
     }
 
     public function index()
     {
-        return Inertia::render('KanbanBoard', ['userId' => Auth::id()]);
+        return Inertia::render('KanbanBoard');
     }
 
     public function store(Request $request)
@@ -33,6 +45,14 @@ class ProjectController extends Controller
         return response()->json($data, 200);
     }
 
+    public function delete($id)
+    {
+        $data = ProjectModel::findOrFail($id);
+        $data->delete();
+
+        return response()->json(['message' => 'Delete Success'], 200);
+    }
+
     public function detail($id)
     {
         $data = ProjectModel::with([
@@ -43,4 +63,44 @@ class ProjectController extends Controller
 
         return Inertia::render('KanbanDetail', compact('data'));
     }
+    public function detailAPI($id)
+    {
+        $data = ProjectModel::with([
+            'columns.cards' => function ($query) {
+                $query->orderBy('position');
+            }
+        ])->findOrFail($id);
+
+        return response()->json($data, 200);
+    }
+
+
+    public function addUser(Request $request, ProjectModel $project)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        // Check if user is already added to the project
+        if ($project->users()->where('users.id', $user->id)->exists()) {
+            return back()->with('error', 'User is already a member of this project.');
+        }
+
+        // Attach the user to the project
+        $project->users()->attach($user->id);
+
+        return back()->with('success', 'User added to the project successfully.');
+    }
+
+    public function removeUser(ProjectModel $project, User $user)
+    {
+        $project->users()->detach($user->id);
+
+        return back()->with('success', 'User removed from the project.');
+    }
+
+
+
 }

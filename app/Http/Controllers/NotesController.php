@@ -10,9 +10,9 @@ use Inertia\Inertia;
 
 class NotesController extends Controller
 {
-    public function fetch()
+    public function fetch($id)
     {
-        $task = Task::with('subTask')->get();
+        $task = Task::where('user_id', '=', $id)->with('subTask')->get();
         return response()->json($task);
     }
 
