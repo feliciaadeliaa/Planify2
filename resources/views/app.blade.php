@@ -15,7 +15,7 @@
     @routes
 </head>
 
-<body class="bg-base-100 text-white">
+<body class="bg-base-200 text-white">
     @inertia
 </body>
 <script>

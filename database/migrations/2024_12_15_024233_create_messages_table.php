@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('project_user', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('project')->cascadeOnDelete();
-            $table->string('from');
-            $table->foreignId('to_user_id')->constrained('users')->cascadeOnDelete();
-            $table->integer('status')->default(1);
+            $table->unsignedBigInteger('project_id');
+            $table->text('message');
+            $table->string('username');
             $table->timestamps();
+        
+            $table->foreign('project_id')->references('id')->on('project')->onDelete('cascade');
         });
+        
     }
 
     /**
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('project_user');
+        Schema::dropIfExists('messages');
     }
 };

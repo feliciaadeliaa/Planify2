@@ -17,6 +17,7 @@ Route::get('/user', function (Request $request) {
 
 // dashboard
 Route::get('/task-statistics', [HomeController::class, 'taskStatistics']);
+Route::get('/fetch-all-users', [HomeController::class, 'fetchUsers'])->name('fetchUsers');
 
 // Notes API
 Route::get('/fetch-notes/{id}', [NotesController::class, 'fetch'])->name('notes.fetch');
@@ -31,18 +32,17 @@ Route::delete('/delete-sub-tasks/{subtask_id}', [NotesController::class, 'delete
 Route::get('/project/{id}', [ProjectController::class, 'fetch'])->name('project.fetch');
 Route::post('/project/store', [ProjectController::class, 'store']);
 Route::delete('/project/delete/{id}', [ProjectController::class, 'delete'])->name('api.project.delete');
-Route::get('/project/detail/{id}', [ProjectController::class, 'detail'])->name('project.detail');
 Route::get('/project/detail/fetch/{id}', [ProjectController::class, 'detailAPI']);
 
 Route::get('/sidebar/recent-items/{id}', [ProjectController::class, 'getRecentItems'])->name('recent.items');
 
 
 // Invite
-Route::get('/project/{project}/invitations', [ProjectController::class, 'getInvitations'])->name('project.invitations');
-Route::post('/project/{project}/invite', [ProjectController::class, 'invite'])->name('project.invite');
+Route::get('/project/{userID}/invitations', [ProjectController::class, 'getInvitations'])->name('project.invitations');
+Route::get('/project/{id}/{from}/{to}/nvite', [ProjectController::class, 'invite'])->name('project.invite');
 
 
-
+    
 
 // columns
 Route::post('/column/store', [ColumnController::class, 'store']);

@@ -25,7 +25,7 @@ onMounted(fetchRecentItems);
 
 <template>
   <aside
-    class="flex flex-col w-64 h-screen px-5 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700"
+    class="flex flex-col w-64 h-screen px-5 py-8 overflow-y-auto border-r rtl:border-r-0 rtl:border-l dark:border-gray-700"
   >
     <a href="#">
       <img
@@ -166,7 +166,7 @@ onMounted(fetchRecentItems);
         <a
          v-for="(item) in recentTasks" :key="item.id"
             class="flex items-center px-3 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
-            :href="route('calender.index')"
+            :href="route('goal.index')"
           >
           <svg
               xmlns="http://www.w3.org/2000/svg"

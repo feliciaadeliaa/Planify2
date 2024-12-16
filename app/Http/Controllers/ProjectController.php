@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProjectModel;
+use App\Models\ProjectUserModel;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -101,6 +103,28 @@ class ProjectController extends Controller
         return back()->with('success', 'User removed from the project.');
     }
 
+    public function invite($id, $from, $to)
+    {
+        $data = [
+            'from' => $from,
+            'to' => $to,
+            'project_id' => $id,
+        ];
 
+        ProjectUserModel::insert($data);
+
+        return response()->json(['message' => 'success'], 200);
+    }
+
+    public function getInvitations($userID)
+    {
+        $invites = DB::table('project_user')
+        ->join('project', 'project.id', '=', 'project_user.project_id')
+        ->join('users', 'users.id', '=', 'project_user.from')
+        // ->select('project.id as project_id', 'project_user.from as from')
+        ->get();
+    
+        return response()->json($invites);
+    }
 
 }

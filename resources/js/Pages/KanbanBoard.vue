@@ -33,15 +33,16 @@ const fetchProject = async () => {
   }
 };
 
-const addInvite = () => {
-  if (invite_email.value && !invites.value.includes(invite_email.value)) {
-    invites.value.push(invite_email.value);
-    invite_email.value = ""; // Clear input after adding
+const pendingInvite = ref([]);
+const fetchPendingInvite = async () => {
+  try {
+    const response = await axios.get(
+      `/api/project/${usePage().props.auth.id}/invitations`
+    );
+    pendingInvite.value = response.data;
+  } catch (error) {
+    console.log(error);
   }
-};
-
-const removeInvite = (index) => {
-  invites.value.splice(index, 1);
 };
 
 const newProject = async () => {
@@ -81,67 +82,97 @@ const deleteProject = async (projectID) => {
   }
 };
 
-onMounted(fetchProject);
+onMounted(() => {
+  fetchProject(), fetchPendingInvite();
+});
 </script>
 
 <template>
-<Main>
-  <div class="mb-8 mt-8 flex items-center justify-between w-full">
-    <h2 class="text-3xl font-bold text-white">All Projects</h2>
-    <button
-      class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition-all"
-      onclick="my_modal_3.showModal()"
-    >
-      Create Project
-    </button>
-  </div>
+  <Main>
+    <div class="mb-8 mt-8 flex items-center justify-between w-full">
+      <h2 class="text-3xl font-bold text-white">All Projects</h2>
+      <button
+        class="btn btn-outline text-white px-6 py-2 rounded-lg shadow-lg"
+        onclick="my_modal_3.showModal()"
+      >
+        Create Project
+      </button>
+    </div>
 
-  <!-- All Projects -->
-  <div class="grid grid-cols-12 gap-6 h-auto">
-    <div class="col-span-8">
-      <div v-if="projects && projects.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- All Projects -->
+    <div class="grid grid-cols-12 gap-6 h-auto">
+      <div class="col-span-12">
         <div
-          v-for="(item, id) in projects"
-          :key="id"
-          class="relative bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-900 dark:to-gray-800 shadow-2xl rounded-lg p-6 transition-transform transform hover:scale-105 hover:shadow-xl"
+          v-if="projects && projects.length"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <!-- Link to project detail page -->
-          <a :href="`/project/detail/${item.id}`">
-            <div class="flex items-center justify-between mb-3">
-              <h2 class="text-xl font-semibold text-white truncate">{{ item.project_title }}</h2>
-            </div>
-            <span class="text-sm text-gray-400">{{ item.due_date }}</span>
-          </a>
-
-          <!-- Button to delete the project -->
-          <button
-            @click="deleteProject(item.id, $event)"
-            class="absolute top-3 right-3 text-white hover:text-red-500 focus:outline-none"
+          <div
+            v-for="(item, id) in projects"
+            :key="id"
+            class="relative bg-gradient-to-r from-gray-800 to-gray-900 dark:from-gray-900 dark:to-gray-800 shadow-2xl rounded-lg p-6 transition-transform transform hover:scale-105 hover:shadow-xl"
           >
-            <i class="fa-solid fa-trash"></i>
-          </button>
+            <!-- Link to project detail page -->
+            <a :href="`/project/detail/${item.id}`">
+              <div class="flex items-center justify-between mb-3">
+                <h2 class="text-xl font-semibold text-white truncate">
+                  {{ item.project_title }}
+                </h2>
+              </div>
+              <span class="text-sm text-gray-400">{{ item.due_date }}</span>
+            </a>
+
+            <!-- Button to delete the project -->
+            <button
+              @click="deleteProject(item.id, $event)"
+              class="absolute top-3 right-3 text-white hover:text-red-500 focus:outline-none"
+            >
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          v-else
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          <p class="text-center text-gray-500 col-span-3">No Projects Yet</p>
         </div>
       </div>
-
-      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <p class="text-center text-gray-500 col-span-3">No Projects Yet</p>
-      </div>
     </div>
 
-    <!-- Stats -->
-    <div class="col-span-4 h-full">
-      <div class="card bg-gray-800 p-6 rounded-lg shadow-lg h-full">
-        <p class="text-xl font-semibold text-white mb-4">Invitation</p>
-        <ul v-for="(item, id) in projects" :key="id" class="space-y-3">
-          <li class="text-gray-300">Email: {{ item.email }}</li>
-          <li class="text-gray-300">Status: {{ item.status }}</li>
-        </ul>
-      </div>
+    <div class="mb-8 mt-8 flex items-center justify-between w-full">
+      <h2 class="text-3xl font-bold text-white">Shared Project</h2>
+      <label for="my_modal_7" class="btn btn-outline text-white"
+        >Pending Invite</label
+      >
     </div>
+  </Main>
+
+  <input type="checkbox" id="my_modal_7" class="modal-toggle" />
+  <div class="modal" role="dialog">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Pending Invite</h3>
+      <ul
+        v-for="pending in pendingInvite"
+        :key="pending.id"
+        class="p-6 bg-base-200 rounded-box w-full my-3"
+      >
+        <li>
+          <div class="flex flex-row items-center justify-between">
+            <div class="flex flex-col">
+              <a>From : {{ pending.name }}</a>
+              <a>Project : {{ pending.project_title }}</a>
+            </div>
+            <div>
+              <a href="" class="btn btn-sm btn-outline btn-success">Accept</a>
+              <a href="" class="btn text-red-600">Decline</a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <label class="modal-backdrop" for="my_modal_7">Close</label>
   </div>
-</Main>
-
-
 
   <dialog id="my_modal_3" class="modal">
     <div class="modal-box">

@@ -8,6 +8,7 @@ use App\Http\Controllers\WeeklyController;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotesController;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
@@ -39,11 +40,13 @@ Route::middleware(AuthMiddleware::class)->group(function () {
     })->name('calender.index');
 
     Route::get('/project/{project}/invitations', [ProjectController::class, 'showInvitations'])
-    ->name('project.invitations');
+        ->name('project.invitations');
 
     Route::post('/projects/{project}/add-user', [ProjectController::class, 'addUser'])->name('projects.add-user');
     Route::delete('/projects/{project}/remove-user/{user}', [ProjectController::class, 'removeUser'])->name('projects.remove-user');
     Route::get('/projects/{project}/users', [ProjectController::class, 'projectUsers'])->name('projects.users');
+    Route::get('/project/detail/{id}', [ProjectController::class, 'detail'])->name('project.detail');
+
 
     // dashboard
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard.index');
@@ -51,7 +54,11 @@ Route::middleware(AuthMiddleware::class)->group(function () {
     // Notes Controller
     Route::get('/goal-tracking/all', [NotesController::class, 'index'])->name('goal.index');
 
-    
+    // Chat
+    Route::get('/chat/{projectID}', [MessageController::class, 'index'])->name('chat.index');
+    Route::post('/chat/send', [MessageController::class, 'store'])->name('chat.store');
+    Route::get('/chat/fetch-messages/{projectID}', [MessageController::class, 'fetchMessages']);
+
     // Kanban Related Controller
     Route::get('/weekly-planner/all', [WeeklyController::class, 'index'])->name('weekly.index');
 
@@ -64,7 +71,7 @@ Route::middleware(AuthMiddleware::class)->group(function () {
 
     // --- Column Controller
     Route::get('/project/all', [ProjectController::class, 'index'])->name('project.index');
-    Route::get('/project/detail/{id}', [ProjectController::class, 'detail'])->name('project.index');
+    // Route::get('/project/detail/{id}', [ProjectController::class, 'detail'])->name('project.index');
     Route::get('/column/all', [ColumnController::class, 'index'])->name('column.index');
 
     // --- Card Controller
