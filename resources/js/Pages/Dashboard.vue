@@ -64,15 +64,41 @@ const calculateProgress = (subtasks) => {
   return Math.round((completed / subtasks.length) * 100);
 };
 
+// Fungsi logout
+const handleLogout = async () => {
+  try {
+    const response = await fetch("/logout", {
+      method: "GET",
+      credentials: "include", // Jika menggunakan cookie untuk autentikasi
+    });
+    if (response.ok) {
+      console.log("Logged out successfully.");
+      window.location.href = "/logout"; // Arahkan ke halaman login
+    } else {
+      console.error("Logout failed:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error during logout:", error);
+  }
+};
+
 onMounted(() => {
   fetchStatistics();
 });
 </script>
 
-
 <template>
   <Main>
-    <h1 class="text-2xl font-bold">Dashboard</h1>
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Dashboard</h1>
+      <button
+        class="btn btn-error btn-sm"
+        @click="handleLogout"
+      >
+        Logout
+      </button>
+    </div>
 
     <!-- Card Stats -->
     <div class="grid grid-cols-4 gap-3 mt-3">
@@ -153,9 +179,6 @@ onMounted(() => {
       <!-- Right -->
       <div class="col-span-4">
         <h1 class="text-2xl font-bold my-3">Goal Tracking</h1>
-        <!-- <canvas id="statusChart"></canvas> -->
-
-        <!-- <canvas id="statusPieChart"></canvas> -->
         <canvas id="projectProgressChart"></canvas>
       </div>
     </div>
