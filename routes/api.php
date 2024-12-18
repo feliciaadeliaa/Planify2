@@ -30,6 +30,7 @@ Route::delete('/delete-sub-tasks/{subtask_id}', [NotesController::class, 'delete
 
 // projects
 Route::get('/project/{id}', [ProjectController::class, 'fetch'])->name('project.fetch');
+Route::get('/project/fetch-collab/{userID}', [ProjectController::class, 'fetch_collab'])->name('project.fetch_collab');
 Route::post('/project/store', [ProjectController::class, 'store']);
 Route::delete('/project/delete/{id}', [ProjectController::class, 'delete'])->name('api.project.delete');
 Route::get('/project/detail/fetch/{id}', [ProjectController::class, 'detailAPI']);
@@ -40,8 +41,8 @@ Route::get('/sidebar/recent-items/{id}', [ProjectController::class, 'getRecentIt
 // Invite
 Route::get('/project/{userID}/invitations', [ProjectController::class, 'getInvitations'])->name('project.invitations');
 Route::get('/project/{id}/{from}/{to}/nvite', [ProjectController::class, 'invite'])->name('project.invite');
-
-
+Route::get('/project/{invite_id}/accept', [ProjectController::class, 'accept'])->name('project.accept');
+Route::get('/project/{invite_id}/decline', [ProjectController::class, 'decline'])->name('project.decline');
     
 
 // columns

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ColumnModel;
 use App\Models\ProjectModel;
 use App\Models\ProjectUserModel;
 use App\Models\Task;
@@ -29,6 +30,16 @@ class ProjectController extends Controller
         return response()->json($data);
     }
 
+    public function fetch_collab($userID)
+    {
+        $data = ProjectUserModel::where('to_user_id', '=', $userID)
+                ->join('project as p' ,'p.id' , 'project_user.project_id')
+                ->where('project_user.status', '=', 2)
+                ->get();
+
+        return response()->json($data);
+    }
+
     public function index()
     {
         return Inertia::render('KanbanBoard');
@@ -42,7 +53,30 @@ class ProjectController extends Controller
             'user_id' => $request->user_id
         ];
 
-        ProjectModel::create($data);
+        $project = ProjectModel::create($data);
+
+        $default_project_columns = [
+            [
+                'project_id' => $project->id,
+                'column_name' => 'Backlog',
+                'status' => 1,
+                'position' => 1,
+            ],
+            [
+                'project_id' => $project->id,
+                'column_name' => 'On Progress',
+                'status' => 1,
+                'position' => 2,
+            ],
+            [
+                'project_id' => $project->id,
+                'column_name' => 'Done',
+                'status' => 1,
+                'position' => 3,
+            ],
+        ];
+
+        ColumnModel::insert($default_project_columns);
 
         return response()->json($data, 200);
     }
@@ -76,38 +110,31 @@ class ProjectController extends Controller
         return response()->json($data, 200);
     }
 
-
-    public function addUser(Request $request, ProjectModel $project)
+    public function accept($invite_id)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email'
-        ]);
+        $invite = ProjectUserModel::findOrFail($invite_id);
+        $invite->status = 2; // diterima
+        $invite->save();
 
-        $user = User::where('email', $request->email)->first();
+        $project = ProjectModel::findOrFail($invite->project_id);
+        $project->status = 'colaboration';
+        $project->save();
 
-        // Check if user is already added to the project
-        if ($project->users()->where('users.id', $user->id)->exists()) {
-            return back()->with('error', 'User is already a member of this project.');
-        }
-
-        // Attach the user to the project
-        $project->users()->attach($user->id);
-
-        return back()->with('success', 'User added to the project successfully.');
+        return response()->json(['message', 'success'], 200);
     }
-
-    public function removeUser(ProjectModel $project, User $user)
+    public function decline($invite_id)
     {
-        $project->users()->detach($user->id);
+        $invite = ProjectUserModel::findOrFail($invite_id);
+        $invite->status = 3; // ditolak
 
-        return back()->with('success', 'User removed from the project.');
+        return response()->json(['message' => 'success'], 200);
     }
 
     public function invite($id, $from, $to)
     {
         $data = [
             'from' => $from,
-            'to' => $to,
+            'to_user_id' => $to,
             'project_id' => $id,
         ];
 
@@ -118,12 +145,15 @@ class ProjectController extends Controller
 
     public function getInvitations($userID)
     {
-        $invites = DB::table('project_user')
-        ->join('project', 'project.id', '=', 'project_user.project_id')
-        ->join('users', 'users.id', '=', 'project_user.from')
-        // ->select('project.id as project_id', 'project_user.from as from')
-        ->get();
-    
+
+        $invites = DB::table('project_user as pu')
+            ->join('project', 'project.id', '=', 'pu.project_id')
+            ->join('users', 'users.id', '=', 'pu.to_user_id')
+            ->select('pu.id', 'pu.project_id', 'pu.status', 'pu.to_user_id', 'users.name', 'project.project_title')
+            ->where('pu.status', '=', 1)
+            ->where('pu.to_user_id', '=', $userID)
+            ->get();
+
         return response()->json($invites);
     }
 

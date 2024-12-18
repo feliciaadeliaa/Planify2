@@ -56,6 +56,7 @@ const addColumn = async () => {
       hideProgressBar: true,
       dangerouslyHTMLString: true,
     });
+    toggleForm()
     window.location.reload();
   } catch (error) {
     console.log("the error = ", error);

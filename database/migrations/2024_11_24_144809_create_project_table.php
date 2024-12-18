@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users');
             $table->string('project_title');
             $table->date('due_date');
-            $table->enum('status', ['pending', 'accepted', 'declined'])->default('pending');
+            $table->enum('status', ['personal', 'colaboration'])->default('personal');
             $table->timestamps();
         });
     }
