@@ -19,11 +19,15 @@ class HomeController extends Controller
         $totalSubTask = SubTask::count();
         $project = ProjectModel::where('user_id', '=', Auth::id());
         $task = Task::where('user_id', '=', Auth::id())->with('subTask')->get();
+        $projectStatistics = ProjectModel::selectRaw('status, COUNT(*) as count')
+        ->groupBy('status')
+        ->pluck('count', 'status');
 
         return Inertia::render('Dashboard', [
             'totalTask' => $totalTask,
             'task' => $task,
             'totalSubTask' => $totalSubTask,
+            'projectStatistics' => $projectStatistics
         ]);
     }
 

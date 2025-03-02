@@ -89,6 +89,7 @@ const deleteCard = async (CardId) => {
       hideProgressBar: true,
       dangerouslyHTMLString: true,
     });
+    window.location.reload();
   } catch (error) {
     console.log("error = ", error);
   }
@@ -105,6 +106,7 @@ const deleteColumn = async (id) => {
       hideProgressBar: true,
       dangerouslyHTMLString: true,
     });
+    window.location.reload();
   } catch (error) {
     console.log("error = ", error);
   }

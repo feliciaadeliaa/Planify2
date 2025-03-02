@@ -2,29 +2,10 @@
 import Main from "./Layout/Main.vue";
 import { defineProps, ref, onMounted } from "vue";
 import { Chart } from "chart.js";
-import {
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  BarController,
-  PieController,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
 
-Chart.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  BarController,
-  PieController,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import { PieController, ArcElement, Title, Tooltip, Legend } from "chart.js";
+import axios from "axios";
+Chart.register(PieController, ArcElement, Title, Tooltip, Legend);
 
 const props = defineProps({
   totalTask: {
@@ -49,13 +30,40 @@ const props = defineProps({
 const statusCounts = ref([]);
 const fetchStatistics = async () => {
   try {
-    const response = await fetch("/api/task-statistics");
-    const data = await response.json();
-    statusCounts.value = data.statusCounts;
-    renderChart();
+    const response = await axios.get("/api/task-statistics"); // Adjust the route if necessary
+    renderChart(response.data);
   } catch (error) {
-    console.error("Error fetching task statistics:", error);
+    console.error("Error fetching project statistics:", error);
   }
+};
+
+const renderChart = (data) => {
+  const ctx = document.getElementById("projectDistributionChart").getContext("2d");
+
+  new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: Object.keys(data), // ['personal', 'colaboration']
+      datasets: [
+        {
+          data: Object.values(data), // [count of personal, count of colaboration]
+          backgroundColor: ["#36A2EB", "#FF6384"], // Colors for each status
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "Project Status Distribution",
+        },
+      },
+    },
+  });
 };
 
 const calculateProgress = (subtasks) => {
@@ -179,7 +187,7 @@ onMounted(() => {
       <!-- Right -->
       <div class="col-span-4">
         <h1 class="text-2xl font-bold my-3">Goal Tracking</h1>
-        <canvas id="projectProgressChart"></canvas>
+        <canvas id="projectDistributionChart"></canvas>
       </div>
     </div>
   </Main>

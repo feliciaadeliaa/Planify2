@@ -140,7 +140,7 @@ class ProjectController extends Controller
 
         ProjectUserModel::insert($data);
 
-        return response()->json(['message' => 'success'], 200);
+        return redirect()->back();
     }
 
     public function getInvitations($userID)
