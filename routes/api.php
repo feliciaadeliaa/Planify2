@@ -21,7 +21,7 @@ Route::get('/fetch-all-users', [HomeController::class, 'fetchUsers'])->name('fet
 
 // Notes API
 Route::get('/fetch-notes/{id}', [NotesController::class, 'fetch'])->name('notes.fetch');
-Route::post('/create-notes', [NotesController::class, 'store']);
+Route::post('/create-notes', [NotesController::class, 'store'])->name('createTask');
 Route::post('/create-sub-task', [NotesController::class, 'createSubTask']);
 Route::delete('/delete-task/{id}', [NotesController::class, 'deleteTask']);
 Route::put('/update-sub-task/{id}', [NotesController::class, 'updateSubTask']);
