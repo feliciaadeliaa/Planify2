@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ProjectModel extends Model
 {
+    use HasFactory;
     protected $table = 'project';
     protected $guarded = [];
 
@@ -25,5 +26,5 @@ class ProjectModel extends Model
     {
         return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id');
     }
-    
+
 }

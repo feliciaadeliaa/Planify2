@@ -23,6 +23,12 @@ class NotesController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => 'required',
+            'due_date' => 'required',
+            'user_id' => 'required',
+        ]);
+
         $data = [
             'title' => $request->title,
             'due_date' => $request->due_date,

@@ -33,9 +33,9 @@ class ProjectController extends Controller
     public function fetch_collab($userID)
     {
         $data = ProjectUserModel::where('to_user_id', '=', $userID)
-                ->join('project as p' ,'p.id' , 'project_user.project_id')
-                ->where('project_user.status', '=', 2)
-                ->get();
+            ->join('project as p', 'p.id', 'project_user.project_id')
+            ->where('project_user.status', '=', 2)
+            ->get();
 
         return response()->json($data);
     }
@@ -47,6 +47,12 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'project_title' => 'required|string|max:255',
+            'due_date' => 'required|date',
+            'user_id' => 'required|exists:users,id'
+        ]);
+
         $data = [
             'project_title' => $request->project_title,
             'due_date' => $request->due_date,
@@ -80,6 +86,7 @@ class ProjectController extends Controller
 
         return response()->json($data, 200);
     }
+
 
     public function delete($id)
     {
@@ -130,8 +137,14 @@ class ProjectController extends Controller
         return response()->json(['message' => 'success'], 200);
     }
 
-    public function invite($id, $from, $to)
+    public function invite(Request $request, $id, $from, $to)
     {
+        $request->validate([
+            'from' => 'required',
+            'to_user_id' =>'required',
+            'project_id' => 'required',
+        ]);
+
         $data = [
             'from' => $from,
             'to_user_id' => $to,

@@ -26,6 +26,13 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        // validasi
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+
         $data = [
             'name' => $request->name,
             'email' => $request->email,
