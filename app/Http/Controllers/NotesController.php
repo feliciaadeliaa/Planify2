@@ -67,7 +67,7 @@ class NotesController extends Controller
         $subTask->status = $request->input('status');
         $subTask->save();
 
-        return response()->json(['message' => 'Subtask status updated successfully.']);
+        return response()->json(['message' => 'Subtask status updated successfully.'], 200);
     }
 
     public function deleteSubTask($subtask_id)
@@ -78,7 +78,7 @@ class NotesController extends Controller
         // Delete the subtask
         $subTask->delete();
 
-        return response()->json(['message' => 'Subtask deleted successfully']);
+        return response()->json(['message' => 'Subtask deleted successfully'], 200);
     }
 
 

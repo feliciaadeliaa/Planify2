@@ -17,7 +17,7 @@ class MessageController extends Controller
             ->toArray(); // Convert to array to return as JSON
 
         // Return messages as JSON
-        return response()->json($messages);
+        return response()->json($messages, 200);
     }
     public function index($projectID)
     {
@@ -37,8 +37,8 @@ class MessageController extends Controller
             'project_id' => 'required|integer',
             'message' => 'required|string', 
             'username' => 'required|string',
-        ]));
+        ]));    
 
-        return response()->json($message);
+        return response()->json(['message' => 'success'], 200);
     }
 }

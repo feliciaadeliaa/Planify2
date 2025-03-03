@@ -10,17 +10,15 @@ class InvitationController extends Controller
 {
     public function acceptInvitation($invitationId)
     {
-        // Find the invitation
         $invitation = Invitation::findOrFail($invitationId);
 
-        // Ensure the invitation belongs to the authenticated user
-        if ($invitation->user_id !== Auth::id()) {
-            return response()->json(['error' => 'You cannot accept this invitation'], 403);
+        if ((int) $invitation->to_user_id !== (int) Auth::id()) {
+            abort(403, 'You cannot accept this invitation');
         }
 
-        // Change the status to 'accepted'
         $invitation->update(['status' => 'accepted']);
 
-        return response()->json(['message' => 'Invitation accepted']);
+        return response()->json(['message' => 'Invitation accepted'], 200);
     }
+
 }

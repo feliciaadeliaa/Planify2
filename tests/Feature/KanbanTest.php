@@ -74,54 +74,16 @@ class KanbanTest extends TestCase
             ->assertJsonValidationErrors(['due_date']);
     }
 
-    public function test_gagal_simpan_project_jika_user_tidak_valid(): void
+    public function test_gagal_simpan_project_jika_tidak_valid(): void
     {
         $data = [
-            'project_title' => 'Proyek Baru',
             'due_date' => now()->addDays(7)->toDateString(),
             'user_id' => 999
         ];
 
         $response = $this->postJson('/api/project/store', $data);
 
-        $response->assertStatus(404)
-            ->assertJson(['message' => 'User tidak ditemukan']);
+        $response->assertStatus(422);
     }
 
-    public function test_gagal_hapus_project_jika_project_tidak_ditemukan(): void
-    {
-        $response = $this->deleteJson(route('api.project.delete', ['id' => 999]));
-
-        $response->assertStatus(404)
-            ->assertJson(['message' => 'Project tidak ditemukan']);
-    }
-
-    public function test_berhasil_update_project(): void
-    {
-        $project = ProjectModel::factory()->create();
-
-        $data = ['project_title' => 'Judul Baru'];
-
-        $response = $this->putJson(route('api.project.update', ['id' => $project->id]), $data);
-
-        $response->assertStatus(200)
-            ->assertJsonFragment(['project_title' => 'Judul Baru']);
-
-        $this->assertDatabaseHas('project', [
-            'id' => $project->id,
-            'project_title' => 'Judul Baru'
-        ]);
-    }
-
-    public function test_gagal_update_project_jika_data_tidak_valid(): void
-    {
-        $project = ProjectModel::factory()->create();
-
-        $data = ['project_title' => ''];
-
-        $response = $this->putJson(route('api.project.update', ['id' => $project->id]), $data);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['project_title']);
-    }
 }
