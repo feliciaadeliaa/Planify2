@@ -26,23 +26,27 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        // validasi
+        // Validasi input
         $request->validate([
             'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
         ]);
-
-        $data = [
+    
+        // Simpan user dengan password yang di-hash
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password,
-        ];
-
-        User::create($data);
-
-        return response()->json(['message' => 'Authenticated', 'redirect' => '/login'], 200);
+            'password' => bcrypt($request->password),
+        ]);
+    
+        // Return response JSON dengan status 201 (Created)
+        return response()->json([
+            'message' => 'Registered successfully',
+            'redirect' => '/login',
+        ], 201);
     }
+    
 
     public function logout()
     {
