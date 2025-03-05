@@ -49,6 +49,6 @@ class HomeController extends Controller
     public function fetchUsers()
     {
         $users = User::all();
-        return response()->json($users);
+        return response()->json($users, 200);
     }
 }
